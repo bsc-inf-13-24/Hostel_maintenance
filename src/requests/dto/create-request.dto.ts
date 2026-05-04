@@ -3,17 +3,17 @@ import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 export class CreateRequestDto {
 
   @IsNumber()
-  studentId : number;
+  studentId!: number;
 
   @IsString()
   @IsNotEmpty()
-  roomNumber : string;
+  roomNumber!: string;
 
   @IsString()
   @IsNotEmpty()
-  issueType : string;
+  issueType!: string;
 
   @IsString()
   @IsNotEmpty()
-  description : string;
+  description!: string;
 }
