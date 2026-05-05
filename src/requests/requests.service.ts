@@ -17,7 +17,7 @@ export class RequestsService {
   // =========================
   async create(createRequestDto: CreateRequestDto): Promise<any> {
 
-    // 🔍 STEP 1: check for duplicate (same room + issue + still pending)
+    //  STEP 1: check for duplicate (same room + issue + still pending)
     const existing = await this.requestsRepository.findOne({
       where: {
         roomNumber: createRequestDto.roomNumber,
@@ -33,7 +33,7 @@ export class RequestsService {
       };
     }
 
-    // 🆕 STEP 2: create new request
+    // STEP 2: create new request
     const request = this.requestsRepository.create({
       ...createRequestDto,
       status: 'pending', // automatically assigned
@@ -105,7 +105,7 @@ export class RequestsService {
   }
 
   // =========================
-  // 🔥 HELPER: ADD PRIORITY
+  //  HELPER: ADD PRIORITY
   // =========================
   private addPriority(requests: Request[]): any[] {
     const now = new Date();
