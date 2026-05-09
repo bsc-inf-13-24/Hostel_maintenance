@@ -27,6 +27,18 @@ export class AuthService {
     private jwtService: JwtService,
 
   ) {}
+    async createAdmin(body: any) {
+  const hashedPassword = await bcrypt.hash(body.password, 10);
+
+  const admin = this.usersRepository.create({
+    email: body.email,
+    password: hashedPassword,
+    role: 'admin',
+  });
+
+  return await this.usersRepository.save(admin);
+}
+
 
   // REGISTER
   async register(createUserDto: CreateUserDto) {
@@ -44,18 +56,7 @@ export class AuthService {
       10,
     );
 
-    async createAdmin(body: any) {
-  const hashedPassword = await bcrypt.hash(body.password, 10);
-
-  const admin = this.usersRepository.create({
-    email: body.email,
-    password: hashedPassword,
-    role: 'admin',
-  });
-
-  return await this.usersRepository.save(admin);
-}
-
+  
 
     // 👇 make first user admin
     const role =
