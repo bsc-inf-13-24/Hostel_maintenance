@@ -17,7 +17,7 @@ export class RequestsService {
   // =========================
   async create(createRequestDto: CreateRequestDto): Promise<any> {
 
-    // 🔍 STEP 1: check for duplicate (same room + issue + still pending)
+    // check for duplicate (same room + issue + still pending)
    const existing = await this.requestsRepository.findOne({
   where: {
     roomNumber: createRequestDto.roomNumber,
@@ -32,7 +32,7 @@ if (existing && existing.status !== 'fixed') {
   };
 }
 
-    // 🆕 STEP 2: create new request
+    // STEP 2: create new request
     const request = this.requestsRepository.create({
       ...createRequestDto,
       status: 'pending', // automatically assigned
