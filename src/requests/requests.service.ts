@@ -32,7 +32,7 @@ if (existing && existing.status !== 'fixed') {
   };
 }
 
-    // 🆕 STEP 2: create new request
+    // STEP 2: create new request
     const request = this.requestsRepository.create({
       ...createRequestDto,
       status: 'pending', // automatically assigned
@@ -104,7 +104,7 @@ if (existing && existing.status !== 'fixed') {
   }
 
   // =========================
-  // 🔥 HELPER: ADD PRIORITY
+  //  HELPER: ADD PRIORITY
   // =========================
   private addPriority(requests: Request[]): any[] {
     const now = new Date();
