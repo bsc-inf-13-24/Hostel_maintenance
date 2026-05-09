@@ -2,7 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
-
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 @Controller('requests')
 export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
@@ -14,10 +15,11 @@ export class RequestsController {
   }
 
   // GET /requests — get all requests (admin view)
-  @Get()
-  findAll() {
-    return this.requestsService.findAll();
-  }
+  @UseGuards(AuthGuard('jwt'))
+@Get()
+findAll() {
+  return this.requestsService.findAll();
+}
 
   // GET /requests/student/:id — get requests by student ID
   @Get('student/:id')
@@ -32,14 +34,19 @@ export class RequestsController {
   }
 
   // PATCH /requests/:id — update a request (admin updates status)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto) {
-    return this.requestsService.update(+id, updateRequestDto);
-  }
+ @UseGuards(AuthGuard('jwt'))
+@Patch(':id')
+update(
+  @Param('id') id: string,
+  @Body() updateRequestDto: UpdateRequestDto,
+) {
+  return this.requestsService.update(+id, updateRequestDto);
+}
 
   // DELETE /requests/:id — delete a request (admin only)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.requestsService.remove(+id);
-  }
+ @UseGuards(AuthGuard('jwt'))
+@Delete(':id')
+remove(@Param('id') id: string) {
+  return this.requestsService.remove(+id);
+}
 }
