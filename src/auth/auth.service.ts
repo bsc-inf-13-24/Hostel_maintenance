@@ -44,6 +44,19 @@ export class AuthService {
       10,
     );
 
+    async createAdmin(body: any) {
+  const hashedPassword = await bcrypt.hash(body.password, 10);
+
+  const admin = this.usersRepository.create({
+    email: body.email,
+    password: hashedPassword,
+    role: 'admin',
+  });
+
+  return await this.usersRepository.save(admin);
+}
+
+
     // 👇 make first user admin
     const role =
       createUserDto.email === 'admin@gmail.com'
