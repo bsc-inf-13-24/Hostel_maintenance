@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RequestsModule } from './requests/requests.module';
 import { Request } from './requests/entities/request.entity';
+import { AuthModule } from './auth/auth.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -21,13 +23,14 @@ import { Request } from './requests/entities/request.entity';
         password: config.get('DB_PASSWORD'),
         serviceName: config.get('DB_SERVICE_NAME'),
         synchronize: config.get('DB_SYNCHRONIZE') === 'true',
-        entities: [Request], // 👈 VERY IMPORTANT
+        entities: [Request,User],
         logging: true,
       }),
     }),
 
     // Your module
     RequestsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
