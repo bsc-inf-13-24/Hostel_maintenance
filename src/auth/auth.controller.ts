@@ -1,3 +1,13 @@
+import {
+  UseGuards,
+} from '@nestjs/common';
+
+import { AuthGuard } from '@nestjs/passport';
+
+import { Roles } from './roles.decorator';
+
+import { RolesGuard } from './roles.guard';
+
 import { Controller, Post, Body } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -15,6 +25,14 @@ export class AuthController {
   register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
   }
+
+  @Post('create-admin')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles('admin')
+createAdmin(@Body() body: any) {
+  return this.authService.createAdmin(body);
+}
+
 
   @Post('login')
   login(@Body() body: any) {
