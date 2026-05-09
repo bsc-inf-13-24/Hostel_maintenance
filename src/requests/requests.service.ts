@@ -17,21 +17,20 @@ export class RequestsService {
   // =========================
   async create(createRequestDto: CreateRequestDto): Promise<any> {
 
-    //  STEP 1: check for duplicate (same room + issue + still pending)
-    const existing = await this.requestsRepository.findOne({
-      where: {
-        roomNumber: createRequestDto.roomNumber,
-        issueType: createRequestDto.issueType,
-        status: 'pending',
-      },
-    });
+    // check for duplicate (same room + issue + still pending)
+   const existing = await this.requestsRepository.findOne({
+  where: {
+    roomNumber: createRequestDto.roomNumber,
+    issueType: createRequestDto.issueType,
+  },
+});
 
-    if (existing) {
-      return {
-        message: 'Similar issue already reported and still pending',
-        existingRequest: existing,
-      };
-    }
+if (existing && existing.status !== 'fixed') {
+  return {
+    message: 'Issue already reported and not yet resolved',
+    existingRequest: existing,
+  };
+}
 
     // STEP 2: create new request
     const request = this.requestsRepository.create({
