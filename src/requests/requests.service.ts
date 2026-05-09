@@ -17,7 +17,7 @@ export class RequestsService {
   // =========================
   async create(createRequestDto: CreateRequestDto): Promise<any> {
 
-    // 🔍 STEP 1: check for duplicate (same room + issue + still pending)
+    // check for duplicate (same room + issue + still pending)
    const existing = await this.requestsRepository.findOne({
   where: {
     roomNumber: createRequestDto.roomNumber,
