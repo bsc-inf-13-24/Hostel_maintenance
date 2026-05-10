@@ -26,6 +26,11 @@ export class AuthController {
     return this.authService.register(createUserDto);
   }
 
+  @Post('setup-admin')
+setupAdmin(@Body() createUserDto:  CreateUserDto) {
+  return this.authService.setupAdmin(createUserDto);
+}
+
   @Post('create-admin')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Roles('admin')

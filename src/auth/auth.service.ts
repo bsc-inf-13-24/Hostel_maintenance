@@ -1,5 +1,5 @@
 import {
-  Injectable,
+  Injectable,ForbiddenException,
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
@@ -27,6 +27,33 @@ export class AuthService {
     private jwtService: JwtService,
 
   ) {}
+
+  async setupAdmin(createUserDto:  CreateUserDto) {
+
+  // check if admin already exists
+  const existingAdmin = await this.usersRepository.findOne({
+    where: { role: 'admin' },
+  });
+
+  // if admin exists, stop
+  if (existingAdmin) {
+    throw new ForbiddenException('Admin already exists');
+  }
+
+  // hash password
+  const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+  // create admin
+  const admin = this.usersRepository.create({
+    email: createUserDto.email,
+    password: hashedPassword,
+    role: 'admin',
+  });
+
+  // save admin
+  return await this.usersRepository.save(admin);
+}
+
     async createAdmin(body: any) {
   const hashedPassword = await bcrypt.hash(body.password, 10);
 
@@ -43,35 +70,27 @@ export class AuthService {
   // REGISTER
   async register(createUserDto: CreateUserDto) {
 
-    const existingUser = await this.usersRepository.findOne({
-      where: { email: createUserDto.email },
-    });
+  const existingUser = await this.usersRepository.findOne({
+    where: { email: createUserDto.email },
+  });
 
-    if (existingUser) {
-      throw new BadRequestException('Email already exists');
-    }
-
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      10,
-    );
-
-  
-
-    // 👇 make first user admin
-    const role =
-      createUserDto.email === 'admin@gmail.com'
-        ? 'admin'
-        : 'student';
-
-    const user = this.usersRepository.create({
-      email: createUserDto.email,
-      password: hashedPassword,
-      role,
-    });
-
-    return await this.usersRepository.save(user);
+  if (existingUser) {
+    throw new BadRequestException('Email already exists');
   }
+
+  const hashedPassword = await bcrypt.hash(
+    createUserDto.password,
+    10,
+  );
+
+  const user = this.usersRepository.create({
+    email: createUserDto.email,
+    password: hashedPassword,
+    role: 'student',
+  });
+
+  return await this.usersRepository.save(user);
+}
 
   // LOGIN
   async login(body: any) {
