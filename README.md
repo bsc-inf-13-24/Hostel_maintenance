@@ -1,139 +1,152 @@
-HOSTEL MAINTENANCE SYSTEM – TEAM PRESENTATION NOTES
-1. Project Overview
-Our project is a Hostel Maintenance Management System.
-It allows:
-•	Students → report maintenance issues
-•	Admin → manage, track, and resolve those issues
-________________________________________
-2.  Problem Statement
-In many hostels:
-•	Issues are reported manually
-•	Reports get lost or delayed
-•	No proper tracking system
- Our system solves this by digitizing the process.
-________________________________________
-3. Objective
-To build a system that:
-•	Allows students to submit maintenance requests
-•	Helps admins manage and resolve them efficiently
-________________________________________
-4.  System Design
- Technologies used
-•	Backend: NestJS
-•	Database: Oracle
-•	Testing: Postman
-________________________________________
- Database Design
-We used ONE table only: requests
-Fields:
-•	id
-•	studentId
-•	roomNumber
-•	issueType
-•	description
-•	status
-•	createdAt
-________________________________________
- Important Design Decision
-We intentionally used one table to keep the system:
-•	simple
-•	normalized
-•	easy to manage
- Features like priority and duplicate prevention are handled in the service layer, not by adding more tables.
-________________________________________
-5.  System Functionality
- Student
-•	Create request
-•	View their own requests
- Admin
-•	View all requests
-•	Update request status
-•	Delete requests
-________________________________________
-🔁 Duplicate Prevention
-•	Before saving a request, system checks:
-o	same room
-o	same issue type
-o	status still pending
- Prevents multiple reports of the same issue
-________________________________________
- Prioritization
-•	Priority is based on how long a request stays unresolved
-Rules:
-•	0–1 days → Low
-•	2–3 days → Medium
-•	4–6 days → High
-•	7+ days → Urgent
- This is calculated dynamically, not stored in the database
-________________________________________
- Status Flow
-•	pending → in-progress → fixed
-________________________________________
-7. Testing
-We used Postman to test:
-•	POST (create request)
-•	GET (fetch requests)
-•	PATCH (update status)
-•	DELETE (remove request)
-________________________________________
-8.  Technical Implementation
-•	DTOs → validate incoming data
-•	Controllers → handle HTTP requests
-•	Services → contain business logic
-•	TypeORM → connects NestJS to Oracle DB
-________________________________________
-9.  About Admin Login 
-We initially planned to include an admin login system.
-However:
-We focused on implementing core system functionality first
-Current state:
-•	Admin and student actions are separated at endpoint level
-Future improvement:
-•	Add authentication using JWT
-•	Add users table with roles (admin/student)
-________________________________________
-10. Key Design Justification
-We did NOT create extra tables because:
-•	Duplicate handling is logic, not data
-•	Priority is calculated, not stored
-•	Adding tables would overcomplicate the system
-________________________________________
-11. Conclusion
-Our system:
-•	Improves reporting of maintenance issues
-•	Prevents duplication
-•	Prioritizes unresolved problems
-•	Provides a structured way to manage hostel maintenance
-•	________________________________________
-ENDPOINTS
+Hostel Maintenance Request System
+Project Overview
+The Hostel Maintenance Request System is a backend REST API developed using NestJS, TypeORM, and Oracle Database.
+The system allows students to report hostel maintenance issues such as:
+Electrical faults
+Water leakages
+Broken doors/windows
+Plumbing issues
+Internet/network problems
+Administrators manage and monitor requests by:
+Viewing all submitted requests
+Updating request status
+Prioritizing long-unresolved requests
+Preventing duplicate maintenance reports
+Managing admin accounts securely using JWT authentication
+Objectives of the System
+The system was designed to:
+Digitize hostel maintenance reporting
+Reduce manual reporting processes
+Prevent duplicated maintenance requests
+Improve issue prioritization
+Track maintenance request status
+Secure admin operations using authentication and authorization
+Technologies Used
+Technology
+Purpose
+NestJS
+Backend framework
+TypeScript
+Programming language
+TypeORM
+ORM for database operations
+Oracle Database
+Data storage
+JWT
+Authentication
+Passport JWT
+Route protection
+Bcrypt
+Password hashing
+Class Validator
+Input validation
+System Architecture
+The project follows modular architecture using NestJS modules.
+Main Modules
+1. Requests Module
+Handles all maintenance request operations.
+2. Auth Module
+Handles:
+Registration
+Login
+JWT token generation
+Role-based authorization
+Database Tables
+1. Requests Table
+Stores maintenance requests.
+Fields
+Field
+Description
+id
+Primary key
+studentId
+Student identifier
+roomNumber
+Hostel room number
+issueType
+Category of issue
+description
+Detailed issue explanation
+status
+Request status
+priority
+Request priority
+createdAt
+Request creation date
+2. Users Table
+Stores authenticated users.
+Fields
+Field
+Description
+id
+Primary key
+email
+User email
+password
+Hashed password
+role
+User role (admin/student)
+RESTful Principles Used
 
-Endpoint // student make a request
-POST /requests
-
- Body (JSON)
-{
-  "studentId": 1,
-  "roomNumber": "A12",
-  "issueType": "Electrical - Broken switch",
-  "description": "Switch is not working"
-}
-
-GET /requests/student/1 // student view his requests
-
-Endpoint // admin view all requests
-GET /requests
-
-GET /requests/1 //admin retrieve specific request
-
-PATCH /requests/1 // admin updates a requests,
-{
-"status": "in-progress"
-}
-
-DELETE /requests/1 //admin deletes requests
-
-
-/// In our case, the admin usually updates only the status field, not the whole request. So PATCH is more appropriate because it allows partial updates.
-/////“We separated functionality logically using endpoints like /requests for admin and /requests/student/:id for students, but since they operate on the same resource, we kept them under one base route to maintain consistency.
-
-
+1. Stateless Communication
+Each request contains all information needed to process it.
+Example:
+JWT token is sent in every protected request
+Server does not store session information
+This improves scalability and performance.
+2. Resource-Based URLs
+Resources are represented using URLs.
+Examples:
+Http
+/requests
+/auth/login
+/auth/register
+3. HTTP Methods
+Different HTTP methods are used depending on the operation.
+Method
+Purpose
+POST
+Create data
+GET
+Retrieve data
+PATCH
+Update partial data
+DELETE
+Remove data
+Authentication System
+The project uses JWT authentication.
+Authentication Flow
+Step 1 — User Login
+User logs in using email and password.
+Step 2 — Token Generation
+Server generates JWT token.
+Step 3 — Token Usage
+Client sends token in request headers.
+Example:
+Http
+Authorization: Bearer your_token_here
+Step 4 — Protected Routes
+Server verifies token before allowing access.
+Role-Based Authorization
+The system supports two roles:
+Role
+Permissions
+Student
+Create and view requests
+Admin
+Manage requests and create admins
+Duplicate Request Prevention
+Problem
+Different students may report the same issue multiple times.
+Example:
+Student A reports broken water pipe
+Student B reports same broken pipe
+This creates duplicated requests.
+Solution Implemented
+The system checks:
+Room number
+Issue type
+Request status
+If a similar unresolved request already exists:
+New request is rejected
+Existing request is reused
