@@ -82,6 +82,3 @@ JWT_SECRET=
 
 ---#GROUP 14
 
-## Authors
-
-- Your team names
