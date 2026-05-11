@@ -79,6 +79,7 @@ JWT_SECRET=
 | GET | /requests/:id |
 | PATCH | /requests/:id |
 | DELETE | /requests/:id |
+
 ---#GROUP 14
 ## Authors
 
