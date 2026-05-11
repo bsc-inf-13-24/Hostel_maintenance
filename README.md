@@ -79,6 +79,11 @@ JWT_SECRET=
 | GET | /requests/:id |
 | PATCH | /requests/:id |
 | DELETE | /requests/:id |
-
 ---#GROUP 14
+## Authors
 
+- BED/COM/25/21 — Namoro Charles
+- BED/COM/06/23 — Suwedi Emmanuel
+- BSC/38/23 — Thonje Thokozani
+- BSC/INF/21/24 — Chitsime Fatsani (Group Reader)
+- BSC/INF/13/24 — Mnyenyembe Kondwani Slynder
